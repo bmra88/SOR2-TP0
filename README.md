@@ -11,7 +11,7 @@ ALUMNO: RAMOS BORIS
 *******************************************************************************
 
 
->_ En la primera parte del trabajo practico 0 se realiza un kernel module
+## >_ En la primera parte del trabajo practico 0 se realiza un kernel module
 
 1° Se compila y convierte el archivo-objeto (miModulo.c) en c
 con el comendo #gcc miModulo.c -o miModulo
@@ -24,7 +24,7 @@ crear los archivos del modulo).
 Para poder visualizar si funciona el kernel module se busca el el log del kernel
 utilizando el comando #dmesg
 
->_ En la segunda parte del trabajo se pide elaborar un kernel modulo para un char device
+## >_ En la segunda parte del trabajo se pide elaborar un kernel modulo para un char device
 
 * Aclaraciones de la funcionalidad de algunos metodos.
 
@@ -54,12 +54,10 @@ device y lo queremos guardar en algun lado para que cuando alguien nos
 haga un read se puedan leer esos caracteres.
 
 
-** Los ultimos 4 metodos pertenecen al fileSystem.
-** Esta segunda parte del trabajo, maneja diferentes memorias, 
-** el de usuario y el de kernel.
+** Los ultimos 4 metodos pertenecen al fileSystem.Esta segunda parte del trabajo, maneja diferentes memorias, el de usuario y el de kernel.
 
 
---------------SECUENCIA DE COMANDOS UTILIZADOS DESDE EL TERMINAL----------------
+--------------<<< SECUENCIA DE COMANDOS UTILIZADOS DESDE EL TERMINAL >>>----------------
 
 _Apertura
 
