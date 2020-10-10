@@ -11,17 +11,24 @@ static int device_open(struct inode *, struct file *);
 static int device_release(struct inode *, struct file *);
 static ssize_t device_read(struct file *, char *, size_t, loff_t *);
 static ssize_t device_write(struct file *, const char *, size_t, loff_t *);
+void encryptCaesar(char *msg, char *dest); //--
 
 // Constantes.
 #define SUCCESS 0
 #define DEVICE_NAME "UNGS"
 #define BUF_LEN 80
+#define LENGHT_ALPHABET 26 //--
+#define INIT_LOWERCASE_ALPHABET 65 //--
+#define INIT_UPPERCASE_ALPHABET 97 //--
 
 // Global variables.
 static int Major;
 static int Device_Open = 0;
 static char msg[BUF_LEN]; // mensaje que dara el dispositivo cuando se lo solicite
 static char *msg_Ptr;
+static char *msg_Caesar; //--
+const char *lowercase = "abcdefghijklmnopqrstuvwxyz"; //--
+const char *uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"; //--
 
 // Definimos las operaciones sobre el file.
 static struct file_operations fops = 
@@ -136,23 +143,41 @@ static ssize_t device_write(struct file *filp, const char *buffer, size_t length
     {
         // copia de dato de usuario a kernel. get_user(kenel,usuario).
         get_user(msg[i], buffer+i);
-
-         /* 
-	  *Aca comienza la encriptacion del mensaje
-	 */
-
-	/*
-	* msg[i] = cesar(msg[i], const_N)
-	*/
     }
-		
-    msg_Ptr = msg;
 
-    printk(KERN_INFO "Se ESCRIBE el charDevice!!!");
+    msg_Caesar = msg; //--
+  
+    // Se llama al metodo de encriptacion -----
+
+    encryptCaesar(msg, msg_Caesar); //--
+		
+    msg_Ptr = msg_Caesar; //--
+
+    printk(KERN_INFO "Se ESCRIBE el charDevice encriptado!!!");
     	
     return i;
 }
 
+
+// Metodo de encriptacion de msjs. ----------------
+void encryptCaesar(char *msg, char *msgCaesar) {
+  int i = 0;
+  while (msg[i]) {
+    char actualChar = msg[i];
+    int origPos = (int) actualChar; 
+    if (!isalpha(actualChar)) {
+      msgCaesar[i] = actualChar;
+      i++;
+      continue; 
+    }
+    if (isupper(actualChar)) {
+      msgCaesar[i] = uppercase[(origPos - INIT_UPPERCASE_ALPHABET + 2) % LENGHT_ALPHABET];
+    } else {
+      msgCaesar[i] = lowercase[(origPos - INIT_UPPERCASE_ALPHABET + 2) % LENGHT_ALPHABET];
+    }
+    i++;
+  }
+}
 
 
 
