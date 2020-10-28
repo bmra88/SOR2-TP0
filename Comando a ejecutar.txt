@@ -1,0 +1,31 @@
+*******************************************************************
+*********************** Comandos a Ejecutar ***********************
+*******************************************************************
+
+>_Apertura
+
+    *Limpia -> make clean
+    *Crea -> make
+    *Carga el modulo -> sudo insmod miModuloCharDevice.ko
+    *Lista los modulos (checking) -> lsmod | grep miModuloCharDevice
+    *Ver el log del kernel -> dmesg
+
+>_Observar el major (N°) asignado al device y crearlo con la sig.
+instruccion.
+
+    *Crear charDevice, con xxx = major -> sudo mknod /dev/UNGS c xxx 0
+
+>_El device necesita los permisos necesarios para realizar las 
+operaciones.
+
+    *Dar permisos -> sudo chmod 666 /dev/UNGS
+
+>_Operaciones read/write.
+
+    *Lectura -> cat /dev/UNGS
+    *Escritura -> echo "The1984" > /dev/UNGS
+
+>_Cierre
+
+    *Descargar/'Eliminar' el modulo -> sudo rmmod miModuloCharDevice.ko
+    *Eliminar charDevice -> sudo rm /dev/UNGS

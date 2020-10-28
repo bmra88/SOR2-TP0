@@ -1,8 +1,10 @@
 // Bibliotecas utilizadas.
+#include <linux/ctype.h>
+#include <linux/string.h>
 #include <linux/module.h> // try_module_get, cleanup_module, ...
 #include <linux/kernel.h> // printk(), ...
 #include <linux/fs.h> // register_filesystem, ...
-#include <asm/uaccess.h> // put_user, get_user, ...
+#include <linux/uaccess.h> // put_user, get_user, ...
 
 // Declaracion de metodos.
 int init_module(void);
@@ -33,7 +35,6 @@ const char *uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"; //--
 // Definimos las operaciones sobre el file.
 static struct file_operations fops = 
 {
-	.owner = THIS_MODULE,
 	.read = device_read,
 	.write = device_write,
 	.open = device_open,
@@ -47,12 +48,10 @@ int init_module(void)
     //y genera un Major number para el device UNGS que se creara e imprime 
     //esta informacion en el log del kernel para la creacion del mismo. 
     Major = register_chrdev(0, DEVICE_NAME, &fops);
-
     if (Major < 0) {
         printk(KERN_ALERT "Registrando char device con %d\n", Major);
         return Major;
     }
-
     printk(KERN_INFO "Tengo major number %d. Hablarle al driver,", Major);
     printk(KERN_INFO "crear un dev_file con \n");
     printk(KERN_INFO "sudo rm /dev/%s\n", DEVICE_NAME);
@@ -60,10 +59,9 @@ int init_module(void)
     printk(KERN_INFO "sudo chmod 666 /dev/%s\n", DEVICE_NAME);
     printk(KERN_INFO "Probar varios minor numbers.\n");
     printk(KERN_INFO "Probar cat y echo al device file.\n");
-    printk(KERN_INFO "Eliminar el /dev/%s y bajar el modulo al terminar.\n", DEVICE_NAME);
-    
+    printk(KERN_INFO "Eliminar el /dev/%s y bajar el modulo al terminar.\n", DEVICE_NAME);   
     printk(KERN_INFO "CharDevice: Driver registrado.\n");
-    return 0;
+    return SUCCESS;
 }
 
 // Se lo llama cuando el modulo es descargado.
@@ -84,39 +82,31 @@ static int device_open(struct inode *inode, struct file *file)
     Device_Open++;
     printk(KERN_ALERT "------------ New apertura ------------.\n");
     printk(KERN_INFO "Se ABRIO el charDevice!!!");
-
     // inicializa el mensaje
     msg_Ptr = msg;
-
     // asigna permiso
-    try_module_get(THIS_MODULE);
-    
+    try_module_get(THIS_MODULE);   
     return SUCCESS;
 }
 
 static int device_release(struct inode *inode, struct file *file)
 {
     Device_Open--;
-
     // informa por el log del kernel que el char device se cerro.
-    printk(KERN_INFO "Se CERRO el charDevice!!!");
-    
+    printk(KERN_INFO "Se CERRO el charDevice!!!");   
     // quita permiso
     module_put(THIS_MODULE);
-
-    return 0;
+    return SUCCESS;
 }
 
 // Instruccion disparadora : cat /dev/UNGS 
 static ssize_t device_read(struct file *filp, char *buffer, size_t length, loff_t * offset)
 {
     // representa la cant. bytes que estan en el buffer 
-    int bytes_read = 0;
-    
+    int bytes_read = 0;  
     // si el mensaje leido es vacio retorna 0
     if (*msg_Ptr == 0)
-        return 0;
-    
+        return 0;   
     // copiamos los datos en el buffer
     while (length && *msg_Ptr) 
     {
@@ -127,10 +117,8 @@ static ssize_t device_read(struct file *filp, char *buffer, size_t length, loff_
         length--;
         bytes_read++;
     }
-
     printk(KERN_INFO "Se LEE el charDevice!!!");
     printk(KERN_INFO "Cant. byte read %d .\n", bytes_read);
-
     // retorna la cant. bytes que estan en el buffer
     return bytes_read;
 }
@@ -138,23 +126,17 @@ static ssize_t device_read(struct file *filp, char *buffer, size_t length, loff_
 // Instruccion disparadora : echo ">_hola mundo" > /dev/UNGS 
 static ssize_t device_write(struct file *filp, const char *buffer, size_t length, loff_t * off)
 {
-    int i=0;
-    for(i ; i<length&&i<BUF_LEN ; i++)
+    int i;
+    for(i = 0; (i < length) && (i < BUF_LEN); i++)
     {
         // copia de dato de usuario a kernel. get_user(kenel,usuario).
         get_user(msg[i], buffer+i);
     }
-
-    msg_Caesar = msg; //--
-  
+    msg_Caesar = msg; //-- 
     // Se llama al metodo de encriptacion -----
-
-    encryptCaesar(msg, msg_Caesar); //--
-		
+    encryptCaesar(msg, msg_Caesar); //--		
     msg_Ptr = msg_Caesar; //--
-
-    printk(KERN_INFO "Se ESCRIBE el charDevice encriptado!!!");
-    	
+    printk(KERN_INFO "Se ESCRIBE el charDevice encriptado!!!");//	
     return i;
 }
 

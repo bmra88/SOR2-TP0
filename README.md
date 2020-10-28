@@ -53,7 +53,7 @@ al usuario.
 device y lo queremos guardar en algun lado para que cuando alguien nos
 haga un read se puedan leer esos caracteres.
 
-"encryptCaesar" Metodo encargado de realizar la encriptacion Cesar (+2 a la izquierda) del mensaje que se guarda.
+"encryptCaesar" Metodo encargado de realizar la encriptacion Cesar (+2 a la derecha) del mensaje que se guarda.
 
 ** Los ultimos 4 metodos pertenecen al fileSystem.Esta segunda parte del trabajo, maneja diferentes memorias, el de usuario y el de kernel.
 
